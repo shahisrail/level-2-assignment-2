@@ -5,37 +5,32 @@ import { Order } from "./order.model";
 import { Product } from "../Product/Product.model";
 
 
-const createOrder = async (order: TOrder) => {
-    // Find the product by ID and check the inventory quantity
-  try {
-    const findProduct = await Product.findOne({
+
+const createOrder = async (order: TOrder): Promise<TOrder | null> => {
+    try {
+      const findProduct = await Product.findOne({
         _id: new Types.ObjectId(order.productId),
         'inventory.quantity': { $gte: order.quantity },
       });
-     console.log( "id",findProduct);
-     if (!findProduct) {
+      if (!findProduct) {
         throw new Error('Insufficient quantity available in inventory');
       }
+
       findProduct.inventory.quantity -= order.quantity;
-      if (findProduct.inventory.quantity > 0) {
-        findProduct.inventory.inStock = true;
-    } else {
-        findProduct.inventory.inStock = true;
-    }
+      findProduct.inventory.inStock = findProduct.inventory.quantity > 0;
+  
       await findProduct.save();
   
+      // Create the order
       const result = await Order.create(order);
       return result;
       
-  } catch (error) {
-   console.log(error);
-  }
-    // Update the product inventory
-   
-    // Create the order
-   
+    } catch (error) {
+      console.error('Error creating order:', error);
+      return null; // or throw the error again based on your error handling strategy
+    }
   };
-
+  
 const getAllOrderDb = async (email:unknown) => {
     if (typeof email === 'string') {
         const result = await Order.find({ email })
@@ -48,3 +43,6 @@ export const orderService = {
     createOrder,
     getAllOrderDb
 }
+
+
+

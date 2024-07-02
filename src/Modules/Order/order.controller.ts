@@ -12,6 +12,10 @@ const createOrders = async (req: Request, res: Response) => {
         console.log(odersvalid);
         const result = await orderService.createOrder(odersvalid as TOrder);
         console.log("result",result);
+        if (!result) {
+       
+          throw new Error('Insufficient quantity available in inventory'); 
+        }
         res.json({
             success: true,
             message: 'Order created successfully!',

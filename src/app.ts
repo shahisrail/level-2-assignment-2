@@ -11,8 +11,8 @@ app.use(express.json());
 app.use(cors());
 
 // routes
-app.use('/api', ProductRoutes);
-app.use('/api', orderRouter);
+app.use('/api/products', ProductRoutes);
+app.use('/api/orders', orderRouter);
 
 app.get('/', (req: Request, res: Response) => {
     res.send('E-commerce server is available');
