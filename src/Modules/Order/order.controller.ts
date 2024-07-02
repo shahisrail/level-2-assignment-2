@@ -3,76 +3,69 @@ import { orderService } from './order.service';
 import orderValidatoinSchema from './order.validatoi';
 import { TOrder } from './order.interface';
 
-
 const createOrders = async (req: Request, res: Response) => {
     try {
         const data = req.body;
         // console.log(data);
-        const odersvalid  = orderValidatoinSchema.parse(data)
-        console.log(odersvalid);
+        const odersvalid = orderValidatoinSchema.parse(data);
+        // console.log(odersvalid);
         const result = await orderService.createOrder(odersvalid as TOrder);
-        console.log("result",result);
-        if (!result) {
-       
-          throw new Error('Insufficient quantity available in inventory'); 
-        }
+        // console.log('result', result);
         res.json({
             success: true,
             message: 'Order created successfully!',
             data: result,
         });
-    } catch (err) {
+    } catch (error: any) {
         res.status(500).json({
             success: false,
-            message: err.message,
-            err
+            message: error.message || 'Something Went Wrong',
+            error: error,
         });
     }
 };
 const getAllOrders = async (req: Request, res: Response) => {
     try {
-        const { email } = req.query
+        const { email } = req.query;
 
-      const result = await orderService.getAllOrderDb(email);
-  
-      if (email) {
-        if (!result) {
-          return res.status(500).json({
-            success: false,
-            message: 'Order not found',
-          })
-        } else {
-          if (result.length === 0) {
-            return res.json({
-              success: false,
-              message: 'no order found for this user email!',
-              data: result,
-            })
-          }
-          return res.json({
-            success: true,
-            message: 'Orders fetched successfully for user email!',
-            data: result,
-          })
+        const result = await orderService.getAllOrderDb(email);
+
+        if (email) {
+            if (!result) {
+                return res.status(500).json({
+                    success: false,
+                    message: 'Order not found',
+                });
+            } else {
+                if (result.length === 0) {
+                    return res.json({
+                        success: false,
+                        message: 'no order found for this user email!',
+                        data: result,
+                    });
+                }
+                return res.json({
+                    success: true,
+                    message: 'Orders fetched successfully for user email!',
+                    data: result,
+                });
+            }
         }
-      }
-  
 
-  
-      res.status(200).json({
-        success: true,
-        message: 'Orders fetched successfully!',
-        data: result,
-      });
+        res.status(200).json({
+            success: true,
+            message: 'Orders fetched successfully!',
+            data: result,
+        });
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        error
-      });
+        res.status(500).json({
+            success: false,
+            error,
+        });
     }
-  };
-  
+};
+
 export const orderController = {
     createOrders,
-    getAllOrders
-}
+    getAllOrders,
+};
