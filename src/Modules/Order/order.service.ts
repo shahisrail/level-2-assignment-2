@@ -11,7 +11,7 @@ const createOrder = async (order: TOrder) => {
             _id: new Types.ObjectId(order.productId),
             'inventory.quantity': { $gte: order.quantity },
         });
-        console.log('id', findProduct);
+        // console.log('id', findProduct);
 
         if (findProduct === null) {
             throw new Error('Insufficient quantity available in inventory');
