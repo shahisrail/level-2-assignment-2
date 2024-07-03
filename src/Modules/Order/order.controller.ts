@@ -19,7 +19,7 @@ const createOrders = async (req: Request, res: Response) => {
     } catch (error) {
         res.status(500).json({
             success: false,
-            message: error.message || 'Something Went Wrong',
+            message: 'Something Went Wrong',
             error: error,
         });
     }
